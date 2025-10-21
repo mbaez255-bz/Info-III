@@ -1,4 +1,4 @@
-package Tp3.utils;
+package Ordenamiento.utils;
 
 /**
  * Representa un pedido realizado en la pizzería.
