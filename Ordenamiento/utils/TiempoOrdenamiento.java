@@ -1,4 +1,4 @@
-package Tp3.utils;
+package Ordenamiento.utils;
 
 public class TiempoOrdenamiento {
      public static long medirTiempo(Runnable metodo) {

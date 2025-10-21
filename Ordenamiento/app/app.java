@@ -1,9 +1,10 @@
-package Tp3.app;
+package Ordenamiento.app;
 
 // Si usas packages, asegúrate que la estructura de carpetas coincida. Ej: package Tp3.app;
 
 import java.util.Scanner;
-import Tp3.utils.*;
+
+import Ordenamiento.utils.*;
 
 /**
  * Aplicación principal para gestionar pedidos de una pizzería.
