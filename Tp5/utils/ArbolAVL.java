@@ -3,21 +3,12 @@ package Tp5.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ArbolAVL.java
- * Implementación genérica y documentada de un árbol AVL (árbol binario de búsqueda auto-balanceado).
- * @param <T> Tipo de dato almacenado (debe ser Comparable)
- */
 public class ArbolAVL<T extends Comparable<T>> {
     // Raíz del árbol
     private Node<T> raiz;
-    // Estadísticas de rotaciones
-    private int contadorRotaciones = 0;
-    private final List<String> logRotaciones = new ArrayList<>();
     // Modo: true durante una operación pública de insertar para imprimir info en rebalanceo
     private boolean modoInsertando = false;
-    // Mensajes generados durante una operación de inserción (se acumulan y se muestran al final)
-    private final List<String> mensajesModoInsertar = new ArrayList<>();
+    // (se muestran durante insertar cuando corresponde)
 
     /**
      * Inserta un elemento en el árbol.
@@ -26,11 +17,14 @@ public class ArbolAVL<T extends Comparable<T>> {
 
     public void insertar(T dato) {
         if (dato == null) throw new IllegalArgumentException("El dato no puede ser nulo");
-        // Preparar mensajes de inserción
-        mensajesModoInsertar.clear();
+        // Si ya existe, solo avisar y salir
+        if (buscar(dato)) {
+            System.out.println("No se permiten duplicados: " + dato);
+            return;
+        }
 
-        // Mostrar árbol antes de la inserción (solo dibujo compacto y recorrido antes)
-        System.out.println("\nÁrbol antes de insertar " + dato + ":");
+    // Mostrar árbol antes de la inserción 
+    System.out.println("\nÁrbol antes de insertar " + dato + ":");
     if (raiz == null) System.out.println("(vacío)"); else imprimirArbol();
         System.out.println("Recorrido in-order antes: " + recorridoEnOrden());
 
@@ -41,7 +35,8 @@ public class ArbolAVL<T extends Comparable<T>> {
             modoInsertando = false;
         }
 
-        // Mostrar árbol después de la inserción (solo dibujo compacto)
+        // Mostrar árbol después de la inserción 
+        System.out.println("---------------------------------------");
         System.out.println("Árbol después de insertar " + dato + ":");
     if (raiz == null) System.out.println("(vacío)"); else imprimirArbol();
 
@@ -49,35 +44,46 @@ public class ArbolAVL<T extends Comparable<T>> {
         System.out.println("Recorrido in-order después: " + recorridoEnOrden());
     }
 
-
     /** Busca si un elemento existe en el árbol. */
     public boolean buscar(T dato) {
         return buscarRec(raiz, dato) != null;
     }
 
-    /** Elimina un elemento del árbol (si existe). */
-    public void eliminar(T dato) {
+    /** Elimina un elemento del árbol (si existe). Devuelve true si se eliminó. */
+    public boolean eliminar(T dato) {
+        if (raiz != null && raiz.valor.equals(dato)) {
+            System.out.println("Opción no válida: no se puede eliminar la raíz");
+            return false;
+        }
+        List<T> antes = recorridoEnOrden();
         raiz = eliminarRec(raiz, dato);
+        List<T> despues = recorridoEnOrden();
+        if (antes.equals(despues)) {
+            System.out.println("No se encontró: " + dato);
+            return false;
+        } else {
+            // Mostrar árbol después de la eliminación
+            System.out.println("\nÁrbol después de eliminar " + dato + ":");
+            if (raiz == null) System.out.println("(vacío)"); else imprimirArbol();
+            return true;
+        }
     }
 
-    /**
-     * Recorre el árbol en orden (in-order) y devuelve los valores en una lista.
-     Devuelve una lista con los elementos del árbol en orden (in-order).*/
+    /*Recorre el árbol en orden (in-order) y devuelve los valores en una lista.*/
     public List<T> recorridoEnOrden() {
         List<T> resultado = new ArrayList<>();
         recorridoEnOrdenRec(raiz, resultado);
         return resultado;
     }
  
-
     /** Devuelve la altura del árbol. */
     public int obtenerAltura() { return obtenerAlturaNodo(raiz); }
 
-    /** Imprime el árbol de forma textual para inspección. */
+    /** Imprime el árbol de forma textual para inspección (vista lateral). */
     public void imprimirArbol() { imprimirArbolRec(raiz, "", true); }
 
 
-    // --- Métodos privados ---
+    // --- METODOS PRIVADOS ---
 
     // Inserción recursiva: devuelve el subárbol balanceado
     private Node<T> insertarRec(Node<T> nodo, T dato) {
@@ -88,7 +94,7 @@ public class ArbolAVL<T extends Comparable<T>> {
         } else if (comparacion > 0) {
             nodo.derecho = insertarRec(nodo.derecho, dato);
         } else {
-            return nodo; // No se permiten duplicados
+            return nodo;
         }
         actualizarAltura(nodo);
         return rebalancear(nodo);
@@ -133,51 +139,51 @@ public class ArbolAVL<T extends Comparable<T>> {
 
         // Detectar caso y registrar antes de aplicar rotación
         if (balance < -1 && balDer <= 0) {
-            String msg = "CASO RR detectado en nodo=" + nodo.valor + " (FE=" + balance + ")";
-            logRotaciones.add(msg);
             if (modoInsertando) {
                 int altIzq = obtenerAlturaNodo(nodo.izquierdo);
                 int altDer = obtenerAlturaNodo(nodo.derecho);
-                System.out.println("FE antes de balancear en nodo " + nodo.valor + ": " + balance + ".");
+                System.out.println();
+                System.out.println("FE antes de balancear en nodo " + nodo.valor + " : " + balance);
                 System.out.println("Acción: se aplicará RR");
-                System.out.println("Porque altura(izq)=" + altIzq + ", altura(der)=" + altDer + " -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println("Porque altura(izq) = " + altIzq + ", altura(der) = " + altDer + "  -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println();
             }
             return rotarIzquierda(nodo);
         }
         if (balance > 1 && balIzq >= 0) {
-            String msg = "CASO LL detectado en nodo=" + nodo.valor + " (FE=" + balance + ")";
-            logRotaciones.add(msg);
             if (modoInsertando) {
                 int altIzq = obtenerAlturaNodo(nodo.izquierdo);
                 int altDer = obtenerAlturaNodo(nodo.derecho);
-                System.out.println("FE antes de balancear en nodo " + nodo.valor + ": " + balance + ".");
+                System.out.println();
+                System.out.println("FE antes de balancear en nodo " + nodo.valor + " : " + balance);
                 System.out.println("Acción: se aplicará LL");
-                System.out.println("Porque altura(izq)=" + altIzq + ", altura(der)=" + altDer + " -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println("Porque altura(izq) = " + altIzq + ", altura(der) = " + altDer + "  -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println();
             }
             return rotarDerecha(nodo);
         }
         if (balance > 1 && balIzq < 0) {
-            String msg = "CASO LR detectado en nodo=" + nodo.valor + " (FE=" + balance + ")";
-            logRotaciones.add(msg);
             if (modoInsertando) {
                 int altIzq = obtenerAlturaNodo(nodo.izquierdo);
                 int altDer = obtenerAlturaNodo(nodo.derecho);
-                System.out.println("FE antes de balancear en nodo " + nodo.valor + ": " + balance + ".");
+                System.out.println();
+                System.out.println("FE antes de balancear en nodo " + nodo.valor + " : " + balance);
                 System.out.println("Acción: se aplicará LR");
-                System.out.println("Porque altura(izq)=" + altIzq + ", altura(der)=" + altDer + " -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println("Porque altura(izq) = " + altIzq + ", altura(der) = " + altDer + "  -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println();
             }
             nodo.izquierdo = rotarIzquierda(nodo.izquierdo);
             return rotarDerecha(nodo);
         }
         if (balance < -1 && balDer > 0) {
-            String msg = "CASO RL detectado en nodo=" + nodo.valor + " (FE=" + balance + ")";
-            logRotaciones.add(msg);
             if (modoInsertando) {
                 int altIzq = obtenerAlturaNodo(nodo.izquierdo);
                 int altDer = obtenerAlturaNodo(nodo.derecho);
-                System.out.println("FE antes de balancear en nodo " + nodo.valor + ": " + balance + ".");
+                System.out.println();
+                System.out.println("FE antes de balancear en nodo " + nodo.valor + " : " + balance);
                 System.out.println("Acción: se aplicará RL");
-                System.out.println("Porque altura(izq)=" + altIzq + ", altura(der)=" + altDer + " -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println("Porque altura(izq) = " + altIzq + ", altura(der) = " + altDer + "  -> FE = " + altIzq + " - " + altDer + " = " + balance);
+                System.out.println();
             }
             nodo.derecho = rotarDerecha(nodo.derecho);
             return rotarIzquierda(nodo);
@@ -188,9 +194,7 @@ public class ArbolAVL<T extends Comparable<T>> {
 
     // Rotación izquierda: devuelve nueva raíz del subárbol
     private Node<T> rotarIzquierda(Node<T> y) {
-        // contar y registrar la rotación concreta
-    contadorRotaciones++;
-    logRotaciones.add("rotacionIzquierda en nodo=" + y.valor);
+        // rotación izquierda
         Node<T> x = y.derecho;
         Node<T> tempIzq = x.izquierdo;
         x.izquierdo = y;
@@ -202,8 +206,6 @@ public class ArbolAVL<T extends Comparable<T>> {
 
     // Rotación derecha: devuelve nueva raíz del subárbol
     private Node<T> rotarDerecha(Node<T> y) {
-    contadorRotaciones++;
-    logRotaciones.add("rotacionDerecha en nodo=" + y.valor);
         Node<T> x = y.izquierdo;
         Node<T> tempDer = x.derecho;
         x.derecho = y;
@@ -261,188 +263,49 @@ public class ArbolAVL<T extends Comparable<T>> {
         Node(T valor) { this.valor = valor; this.altura = 1; }
     }
 
-    // ---------- Funciones y estructuras públicas para análisis ----------
-    /** Devuelve la cantidad de rotaciones realizadas desde el último reinicio. */
-    public int obtenerContadorRotaciones() { return contadorRotaciones; }
-
-    /** Devuelve un registro (lista) con los eventos de rotación y casos detectados. */
-    public List<String> obtenerLogRotaciones() { return new ArrayList<>(logRotaciones); }
-
-    /** Reinicia el contador y registro de rotaciones. */
-    public void reiniciarEstadisticasRotaciones() { contadorRotaciones = 0; logRotaciones.clear(); }
-
-    /** Representa información de un nodo: valor, altura y factor de equilibrio. */
-    public static class InfoNodo<E> {
-        public final E valor;
-        public final int altura;
-        public final int fe;
-
-        public InfoNodo(E valor, int altura, int fe) { this.valor = valor; this.altura = altura; this.fe = fe; }
-
-        @Override
-        public String toString() { return "(" + valor + ", h=" + altura + ", fe=" + fe + ")"; }
+    // Método público para verificar si el árbol cumple las condiciones AVL
+    public boolean esAVL() {
+        return esAVLRec(raiz, null, null).esAVL;
     }
 
-    /** Devuelve una lista con InfoNodo en recorrido in-order (valor, altura, FE). */
-    public List<InfoNodo<T>> listarInfoNodos() {
-        List<InfoNodo<T>> res = new ArrayList<>();
-        listarInfoNodosRec(raiz, res);
-        return res;
-    }
+    // Método recursivo que devuelve si el subárbol es AVL y su altura
+    private Resultado esAVLRec(Node<T> nodo, T min, T max) {
+        if (nodo == null) return new Resultado(true, 0);
 
-    private void listarInfoNodosRec(Node<T> nodo, List<InfoNodo<T>> res) {
-        if (nodo == null) return;
-        listarInfoNodosRec(nodo.izquierdo, res);
-        int altura = nodo.altura;
-        int fe = obtenerBalance(nodo);
-        res.add(new InfoNodo<>(nodo.valor, altura, fe));
-        listarInfoNodosRec(nodo.derecho, res);
-    }
-
-    /** Imprime el árbol con datos de cada nodo (altura y FE). */
-    public void imprimirArbolConDatos() {
-        // Por defecto imprimimos en formato compacto vertical (raíz arriba)
-        imprimirArbolSimpleConFE();
-    }
-
-
-    /** Imprime el árbol por niveles (raíz arriba), mostrando (valor, h, fe) por nodo. */
-    public void imprimirArbolVertical() {
-        if (raiz == null) {
-            System.out.println("(vacío)");
-            return;
-        }
-        List<Node<T>> current = new ArrayList<>();
-        current.add(raiz);
-        while (!current.isEmpty()) {
-            List<Node<T>> next = new ArrayList<>();
-            StringBuilder line = new StringBuilder();
-            for (Node<T> n : current) {
-                if (n == null) {
-                    line.append("    ");
-                    next.add(null);
-                    next.add(null);
-                } else {
-                    String info = n.valor + "(h=" + n.altura + ",fe=" + obtenerBalance(n) + ")";
-                    line.append(info).append("   ");
-                    next.add(n.izquierdo);
-                    next.add(n.derecho);
-                }
-            }
-            // trim trailing spaces
-            System.out.println(line.toString().trim());
-            // prepare next level: remove trailing nulls
-            int last = next.size() - 1;
-            while (last >= 0 && next.get(last) == null) last--;
-            if (last < 0) break;
-            current = new ArrayList<>(next.subList(0, last + 1));
-        }
-        // Imprimir caminos desde la raíz para cada nodo (pre-order)
-        System.out.println();
-        System.out.println("Caminos (desde la raíz, L = hijo izquierdo, R = hijo derecho):");
-        List<String> caminos = new ArrayList<>();
-        listarInfoConCaminoRec(raiz, "", caminos);
-        for (String s : caminos) System.out.println(s);
-    }
-
-    /** Imprime el árbol en formato compacto con valores centrados y conectores '/' '\\' como en la imagen. */
-    /** Imprime el árbol de forma simple: raíz y luego cada hijo en línea nueva con indentación y FE. */
-    public void imprimirArbolSimpleConFE() {
-        imprimirArbolSimpleRec(raiz, "");
-    }
-
-    private void imprimirArbolSimpleRec(Node<T> nodo, String pref) {
-        if (nodo == null) return;
-        System.out.println(pref + nodo.valor + " (fe=" + obtenerBalance(nodo) + ")");
-        imprimirArbolSimpleRec(nodo.izquierdo, pref + "  ");
-        imprimirArbolSimpleRec(nodo.derecho, pref + "  ");
-    }
-
-    /** Devuelve una lista de strings con el camino desde la raíz a cada nodo y su info (pre-order). */
-    public List<String> listarInfoConCamino() {
-        List<String> res = new ArrayList<>();
-        listarInfoConCaminoRec(raiz, "", res);
-        return res;
-    }
-
-    private void listarInfoConCaminoRec(Node<T> nodo, String path, List<String> res) {
-        if (nodo == null) return;
-        String camino = path.isEmpty() ? "root" : path.trim();
-        res.add(camino + " -> " + nodo.valor + " (h=" + nodo.altura + ", fe=" + obtenerBalance(nodo) + ")");
-        listarInfoConCaminoRec(nodo.izquierdo, path + " L", res);
-        listarInfoConCaminoRec(nodo.derecho, path + " R", res);
-    }
-
-    /**
-     * Imprime el árbol mostrando el camino desde la raíz a cada nodo usando ' ----- ' como separador
-     * entre niveles. Cada línea mostrará: <camino> ----- <valor> (h=<altura>, fe=<fe>)
-     * Ejemplo:
-     * root ----- 10 (h=2, fe=1)
-     * root ----- L ----- 5 (h=1, fe=0)
-     */
-    public void imprimirArbolConCaminosDash() {
-        if (raiz == null) {
-            System.out.println("(vacío)");
-            return;
-        }
-        List<String> lineas = new ArrayList<>();
-        imprimirArbolConCaminosDashRec(raiz, "root", lineas);
-        for (String s : lineas) {
-            System.out.println(s);
-        }
-    }
-
-    /** Imprime el árbol en formato ASCII simple con la raíz arriba y '/' '\\' para ramas.
-     * Ejemplo para un árbol pequeño:
-     *   2
-     *  / \
-     * 1   4
-     */
-    public void imprimirArbolAscii() {
-        if (raiz == null) {
-            System.out.println("(vacío)");
-            return;
-        }
-        // Construimos líneas por niveles con posiciones aproximadas.
-        List<StringBuilder> canvas = new ArrayList<>();
-        buildAscii(raiz, 0, canvas);
-        for (StringBuilder sb : canvas) System.out.println(sb.toString());
-    }
-
-    // Helper que coloca cada nodo en una línea específica y añade conectores
-    private void buildAscii(Node<T> nodo, int depth, List<StringBuilder> canvas) {
-        if (nodo == null) return;
-        // Asegurar que exista la línea para este depth*2 (valor y posible conectores)
-        int lineIdx = depth * 2;
-        while (canvas.size() <= lineIdx + 1) canvas.add(new StringBuilder());
-
-        String val = String.valueOf(nodo.valor);
-        // Center-ish placement: si la línea está vacía, agregamos valor, sino lo separamos con un espacio
-        StringBuilder lineVal = canvas.get(lineIdx);
-        if (lineVal.length() > 0) lineVal.append(" ");
-        lineVal.append(val);
-
-        // Conectores en la siguiente línea si tiene hijos
-        StringBuilder lineConn = canvas.get(lineIdx + 1);
-        boolean hasIzq = nodo.izquierdo != null;
-        boolean hasDer = nodo.derecho != null;
-        if (hasIzq || hasDer) {
-            if (lineConn.length() > 0) lineConn.append(" ");
-            if (hasIzq) lineConn.append("/"); else lineConn.append(" ");
-            lineConn.append(" ");
-            if (hasDer) lineConn.append("\\"); else lineConn.append(" ");
+        // Propiedad de ABB: verificar rangos
+        if ((min != null && nodo.valor.compareTo(min) <= 0) ||
+            (max != null && nodo.valor.compareTo(max) >= 0)) {
+            return new Resultado(false, 0);
         }
 
-        // Recorrer hijos
-        buildAscii(nodo.izquierdo, depth + 1, canvas);
-        buildAscii(nodo.derecho, depth + 1, canvas);
+        // Verificar hijos
+        Resultado izq = esAVLRec(nodo.izquierdo, min, nodo.valor);
+        Resultado der = esAVLRec(nodo.derecho, nodo.valor, max);
+
+        boolean balanceado = izq.esAVL && der.esAVL &&
+            Math.abs(izq.altura - der.altura) <= 1;
+
+        int altura = 1 + Math.max(izq.altura, der.altura);
+
+        return new Resultado(balanceado, altura);
     }
 
-    private void imprimirArbolConCaminosDashRec(Node<T> nodo, String camino, List<String> out) {
-        if (nodo == null) return;
-        String linea = camino + " ----- " + nodo.valor + " (h=" + nodo.altura + ", fe=" + obtenerBalance(nodo) + ")";
-        out.add(linea);
-        imprimirArbolConCaminosDashRec(nodo.izquierdo, camino + " ----- L", out);
-        imprimirArbolConCaminosDashRec(nodo.derecho, camino + " ----- R", out);
+    // Clase auxiliar interna
+    private static class Resultado {
+        boolean esAVL;
+        int altura;
+        Resultado(boolean e, int a) { esAVL = e; altura = a; }
+    }
+
+    /** Pruebas mínimas de esAVL() */
+    public static void pruebasEsAVL() {
+        System.out.println("\n--- Pruebas esAVL() ---");
+        ArbolAVL<Integer> v = new ArbolAVL<>(); v.raiz = new Node<>(2); v.raiz.izquierdo = new Node<>(1); v.raiz.derecho = new Node<>(4);
+        v.actualizarAltura(v.raiz.izquierdo); v.actualizarAltura(v.raiz.derecho); v.actualizarAltura(v.raiz);
+        System.out.println(v.esAVL() ? "true es avl" : "false no es avl");
+        ArbolAVL<Integer> nb = new ArbolAVL<>(); nb.raiz = new Node<>(1); nb.raiz.derecho = new Node<>(2); nb.raiz.derecho.derecho = new Node<>(3);
+        nb.actualizarAltura(nb.raiz.derecho.derecho); nb.actualizarAltura(nb.raiz.derecho); nb.actualizarAltura(nb.raiz);
+        System.out.println(nb.esAVL() ? "true es avl" : "false no es avl");
+        System.out.println("--- Fin ---\n");
     }
 }
