@@ -7,7 +7,7 @@ Permite al usuario agregar, listar, marcar como completadas, eliminar y guardar 
 
 ## Estructura del proyecto
 
-- `src/app/app.java`: Clase principal que contiene el menú y la lógica de interacción con el usuario.
+-- `src/main/Main.java`: Clase principal que contiene el menú y la lógica de interacción con el usuario.
 - `src/utils/GestorTareas.java`: Clase que gestiona la lista de tareas y todas las operaciones sobre ellas (agregar, listar, marcar, eliminar, guardar y cargar).
 - `src/utils/Tarea.java`: Clase que representa una tarea individual, con descripción y estado (pendiente o completada).
 
