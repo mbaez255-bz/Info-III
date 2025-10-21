@@ -1,5 +1,4 @@
-
-package app;
+package main;
 
 import utils.GestorTareas;
 import java.util.Scanner;
@@ -7,7 +6,7 @@ import java.util.Scanner;
 /**
  * Aplicación principal para gestionar tareas desde consola.
  */
-public class app {
+public class Main {
     public static void main(String[] args) {
         final String ARCHIVO = "tareas.txt";
         GestorTareas gestor = new GestorTareas();
