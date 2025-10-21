@@ -1,3 +1,4 @@
+
 package utils;
 
 import java.util.Scanner;
@@ -28,3 +29,14 @@ public class CadenaCapicua {
         return true;
     }
 }
+/*
+Secuencia de ejemplo:
+esCapicua("anita lava la tina"):
+    limpio = "anitalavalatina"
+    i=0, j=14: a==a
+    i=1, j=13: n==n
+    i=2, j=12: i==i
+    ...
+    i=7, j=7: l==l
+Devuelve: true
+*/
