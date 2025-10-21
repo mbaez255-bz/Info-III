@@ -73,8 +73,11 @@ public class BusquedaArreglo {
         }
         return promedioArreglo(arreglo, i + 1, sumaPrevia + arreglo[i]);
     }
-        /*buscar([3,5,7,9], 7, 0)
-        ¿posición 0 == 4? No → sigue
-        ¿3 == 7? No → sigue
-         buscar([3,5,7,9], 7, 1)*/
-}
+
+
+} /*Secuencia de ejemplo:
+    buscarArreglo([3,5,7,9], 7, 0):
+    arreglo[0]=3 ≠ 7 → buscarArreglo([3,5,7,9], 7, 1)
+    arreglo[1]=5 ≠ 7 → buscarArreglo([3,5,7,9], 7, 2)
+    arreglo[2]=7 == 7 → retorna true*/
+
