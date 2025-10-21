@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 /**
  * Clase principal del proyecto. Muestra un menú interactivo para ejecutar distintos ejercicios.
- */
+  */
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
