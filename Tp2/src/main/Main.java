@@ -1,4 +1,4 @@
-package app;
+package main;
 
 import utils.*;
 import java.util.Scanner;
@@ -6,7 +6,7 @@ import java.util.Scanner;
 /**
  * Clase principal del proyecto. Muestra un menú interactivo para ejecutar distintos ejercicios.
  */
-public class app {
+public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int opcion;

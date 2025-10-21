@@ -7,9 +7,9 @@ Este proyecto es una aplicación de consola en Java 17, modularizada, que presen
 El objetivo principal es practicar la programación orientada a objetos, el uso de métodos estáticos, el manejo de entradas por consola y la resolución de problemas clásicos de algoritmia.
 
 ## Estructura del proyecto
-src/
- ├── app/
- │    └── App.java           # Clase principal con el menú interactivo
+ src/
+ ├── main/
+ │    └── Main.java           # Clase principal con el menú interactivo
  └── utils/
       ├── BusquedaArreglo.java     # Búsqueda de un elemento en un arreglo
       ├── CadenaCapicua.java       # Verifica si una cadena es capicúa
