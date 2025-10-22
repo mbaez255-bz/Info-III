@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "QueueMenuGeneric",
+            "request": "launch",
+            "mainClass": "Tp3.QueueMenuGeneric",
+            "projectName": "Info-III_49a239bd"
+        },
+        {
+            "type": "java",
+            "name": "QueueMenu",
+            "request": "launch",
+            "mainClass": "Tp3.QueueMenu",
+            "projectName": "Info-III_49a239bd"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
