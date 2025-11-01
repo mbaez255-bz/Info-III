@@ -1,77 +1,53 @@
 package Tp5.main;
 
-import java.util.Scanner;
 import Tp5.utils.ArbolAVL;
 
 /**
- * Menú interactivo para probar la clase ArbolAVL .
+ * Ejecuta de forma hardcodeada las acciones del menú y muestra la salida en consola. 
  */
 public class Main {
-    private static final Scanner SC = new Scanner(System.in, "UTF-8");
-
     public static void main(String[] args) {
-    ArbolAVL<Integer> arbol = new ArbolAVL<>();
-        while (true) {
-            System.out.println("\n***************** OPERACIONES CON AVLTree *****************");
-            System.out.println("1. Insertar nodo");
-            System.out.println("2. Buscar por clave");
-            System.out.println("3. Eliminar por clave");
-            System.out.println("4. Ejecutar pruebas esAVL()");
-            System.out.println("5. Salir");
-          
-            int op = leerEntero("Seleccione una opción (1-5): ");
-            System.out.println("----------------------------");
-            switch (op) {
-                case 1 -> {
-                    int clave = leerEntero("Ingrese la clave a insertar: ");
-                    arbol.insertar(clave);
-                }
-                case 2 -> {
-                    int clave = leerEntero("Ingrese la clave a buscar: ");
-                    boolean existe = arbol.buscar(clave);
-                    System.out.println(existe ? "Encontrado: " + clave : "No encontrado: " + clave);
-                    leerTexto("Presione ENTER para continuar...");
-                }
-                case 3 -> {
-                    int clave = leerEntero("Ingrese la clave a eliminar: ");
-                    boolean ok = arbol.eliminar(clave);
-                    if (ok) System.out.println("Eliminado: " + clave);
-                    leerTexto("Presione ENTER para continuar...");
-                }
-                case 4 -> {
-                    // Comprobar si el árbol actual es AVL
-                    boolean es = arbol.esAVL();
-                    System.out.println(es ? "true es avl" : "false no es avl");
-                    leerTexto("Presione ENTER para continuar...");
-                }
-                case 5 -> {
-                    // Salir del menú
-                    SC.close();
-                    return;
-                }
-                
-                default -> {
-                    System.out.println("Opción no válida.");
-                    leerTexto("Presione ENTER para continuar...");
-                }
-            }
-        }
-    }
+        System.out.println("=== DEMO Tp5: Árbol AVL ===");
 
-     private static int leerEntero(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String line = SC.nextLine();
-            try {
-                return Integer.parseInt(line.trim());
-            } catch (Exception e) {
-                System.out.println("Entrada no válida. Intente de nuevo.");
-            }
-        }
-    }
+        ArbolAVL<Integer> arbol = new ArbolAVL<>();
 
-    private static String leerTexto(String prompt) {
-        System.out.print(prompt);
-        return SC.nextLine();
+        // 1) Preparar un árbol controlado que provoque rebalance tras una eliminación
+        System.out.println("\n1) Construyendo árbol de demo (preparado para eliminación->rebalance):");
+        System.out.println("Datos a ingresar / valores usados: 30, 10, 40, 5, 20, 25, 50");
+        arbol.crearArbolAVL();
+        Integer candidatoAEliminar = 50; // número fijado para la demostración (la función crearArbolAVL no devuelve el candidato)
+
+        //  2) Mostrar estado actual
+        System.out.println("\n2) Árbol actual:");
+        arbol.imprimirArbol();
+        System.out.println("Recorrido in-order: " + arbol.recorridoEnOrden());
+        System.out.println("¿es AVL (árbol actual)? " + arbol.esAVL());
+
+        // 3) Buscar por clave (simula opción 2)
+        System.out.println("\n3) Búsquedas: buscar 25 (debe existir) y 99 (no existe):");
+        System.out.println("buscar(25): " + arbol.buscar(25));
+        System.out.println("buscar(99): " + arbol.buscar(99));
+
+        // 4) Eliminar por clave (simula opción 3) -> eliminamos el candidato preparado
+        System.out.println("\n4) Eliminación que provocará rebalance: eliminar " + candidatoAEliminar);
+        boolean ok = arbol.eliminar(candidatoAEliminar);
+        System.out.println("eliminar(" + candidatoAEliminar + ") -> " + ok);
+        System.out.println("Recorrido in-order: " + arbol.recorridoEnOrden());
+        System.out.println("¿es AVL (después de eliminación)? " + arbol.esAVL());
+
+        // Eliminar un segundo número adicional para mostrar otra operación
+        int otroAEliminar = 25;
+        System.out.println("\nTambién eliminamos el valor: " + otroAEliminar);
+        boolean ok2 = arbol.eliminar(otroAEliminar);
+        System.out.println("eliminar(" + otroAEliminar + ") -> " + ok2);
+        System.out.println("Recorrido in-order: " + arbol.recorridoEnOrden());
+        System.out.println("¿es AVL (después de segunda eliminación)? " + arbol.esAVL());
+
+        // 5) Mostrar resumen final y altura
+        System.out.println("\n5) Resumen final del árbol:");
+        arbol.imprimirArbol();
+        System.out.println("Altura del árbol: " + arbol.obtenerAltura());
+        System.out.println("¿es AVL? " + arbol.esAVL());
+        System.out.println("\n=== FIN DEMO Tp5 ===");
     }
 }
