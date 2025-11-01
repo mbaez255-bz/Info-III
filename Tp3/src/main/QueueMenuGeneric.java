@@ -1,6 +1,8 @@
-package Tp3;
+package Tp3.src.main;
 
 import java.util.Scanner;
+
+import Tp3.src.utils.Queue;
 
 public class QueueMenuGeneric {
 

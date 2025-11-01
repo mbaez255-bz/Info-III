@@ -1,4 +1,4 @@
-package Tp3;
+package Tp3.src.utils;
 
 public class Stack<T> {
     private T[] array;

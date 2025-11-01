@@ -1,4 +1,4 @@
-package Tp4;
+package Tp4.src.utils;
 
 public class LinkedList<T> {
     private ListNode<T> head;

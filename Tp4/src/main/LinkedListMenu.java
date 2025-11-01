@@ -1,6 +1,8 @@
-package Tp4;
+package Tp4.src.main;
 
 import java.util.Scanner;
+
+import Tp4.src.utils.LinkedList;
 
 public class LinkedListMenu {
 
