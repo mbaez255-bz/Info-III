@@ -3,27 +3,12 @@ package Tp6.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Implementación didáctica de un Árbol Rojo-Negro (RBT).
- *
- * Contiene implementaciones mínimas para las tareas del práctico:
- * 1) Definición de nodo y NIL sentinel
- * 2) Rotación izquierda
- * 3) Rotación derecha
- * 4) Inserción como ABB (sin balance)
- * 5) Clasificador de caso para fixInsert
- * 6-7) fixInsert: recoloreos y rotaciones (LL, RR, LR, RL y tío rojo)
- * 8) successor / predecessor
- * 9) Consulta por rango [a,b]
- * 10) Verificadores de invariantes (raíz negra, sin rojo-rojo, altura negra)
- */
 public class ArbolRN<K extends Comparable<K>, V> {
 
     /**
      * Nodo interno del RBT.
      * Contiene key/val, punteros left/right/parent y un booleano 'rojo' que
      * indica el color (true = rojo, false = negro).
-     * Ejercicio relacionado: 1) Nodo y NIL sentinel.
      */
     public class RBNode {
         K key;
@@ -43,7 +28,6 @@ public class ArbolRN<K extends Comparable<K>, V> {
 
         // getters públicos para acceder desde fuera del paquete
         public K getKey() { return key; }
-        public V getVal() { return val; }
     }
 
     // NIL sentinel único por árbol

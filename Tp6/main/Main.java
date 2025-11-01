@@ -1,265 +1,181 @@
 package Tp6.main;
 
 import java.util.List;
-import java.util.Scanner;
 import Tp6.utils.ArbolRN;
-/*"Usar fix al insertar" controla si, al construir el árbol desde una lista manual, las inserciones hacen solamente la inserción de BST (insertBST) o además aplican la corrección de Red‑Black (insertarYArreglar, que hace insertBST + fixInsert).
-Si respondes "s" se usa la versión con fix (árbol resultante mantiene las reglas R‑N); si respondes "n" se usa sólo BST (sin recoloraciones/rotaciones automáticas).*/
 
+/**
+ * Demo non-interactive: ejecuta en secuencia ejemplos hardcodeados que
+ * demuestran cada una de las funcionalidades del menú original.
+ */
 public class Main {
-    // Modo manual persistente: si el usuario ingresa una lista manualmente se guarda
-    // y las siguientes opciones usarán ese árbol sin preguntar demo/manual.
-    private static boolean modoManualPersistente = false;
-    private static ArbolRN<Integer,String> arbolPersistente = null;
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        ArbolRN<Integer,String> arbol = new ArbolRN<>();
+        System.out.println("=== DEMO Tp6: Árbol Rojo-Negro (secuencia hardcodeada) ===\n");
 
-        while (true) {
-            System.out.println("\n--- PRÁCTICO ÁRBOL ROJINEGRO — Menú de pruebas ---");
-            System.out.println("1) Crear NIL/root y mostrar estado");
-            System.out.println("2) Rotación izquierda (demo)");
-            System.out.println("3) Rotación derecha (demo)");
-            System.out.println("4) Insertar como BST (sin balance)");
-            System.out.println("5) Clasificar caso de un nodo (necesita nodo existente)");
-            System.out.println("6) Recolorear por tío rojo (demo mediante insertarYArreglar)");
-            System.out.println("7) Rotación simple/doble (demo -- 8insert + fix)");
-            System.out.println("8) Successor / Predecessor");
-            System.out.println("9) Consulta por rango [a,b]");
-            System.out.println("10) Verificadores de invariantes");
-            System.out.println("11) Mostrar árbol");
-            System.out.println("12) Desactivar modo manual persistente");
-            System.out.println("0) Salir");
-            System.out.print("Opción: ");
-            int op = Integer.parseInt(sc.nextLine().trim());
-            // Si hay un modo manual persistente activo, usamos ese árbol por defecto
-            if (modoManualPersistente && arbolPersistente != null) {
-                arbol = arbolPersistente;
-            }
-            if (op == 0) break;
-            switch (op) {
-                case 1:
-                    if (askDemoOrManual(sc)) {
-                        System.out.println("Estado inicial (árbol vacío con NIL):");
-                        arbol = new ArbolRN<>();
-                        System.out.println("Raíz presente? " + (arbol.getRoot() != null));
-                        System.out.println("Imprimiendo árbol (vacío al inicio):");
-                        arbol.imprimirArbol();
-                    } else {
-                        System.out.println("Inserte una lista de enteros separados por comas para construir el árbol (usar fixInsert? s/n):");
-                        System.out.print("Usar fixInsert al insertar? (s/n): ");
-                        boolean usarFix = sc.nextLine().trim().toLowerCase().startsWith("s");
-                        System.out.println("Ingrese la lista ahora:");
-                        arbol = buildTreeFromList(sc, usarFix);
-                        // activar modo manual persistente
-                        modoManualPersistente = true;
-                        arbolPersistente = arbol;
-                        System.out.println("Árbol construido:"); arbol.imprimirArbol();
-                        System.out.println("Modo manual persistente activado. Para desactivarlo elija opción 12.");
-                    }
-                    break;
-                case 2:
-                    // Demo fija: rotación izquierda sólo en demo (no se permite sobre lista ingresada)
-                    System.out.println("Demo rotateLeft: insertamos 10,5,15,12 y rotamos izquierda en 10");
-                    arbol = new ArbolRN<>();
-                    arbol.insertBST(10, "A");
-                    arbol.insertBST(5, "B");
-                    arbol.insertBST(15, "C");
-                    arbol.insertBST(12, "D");
-                    System.out.println("Antes:"); arbol.imprimirArbol();
-                    ArbolRN<Integer,String>.RBNode n10 = arbol.buscarNodo(10);
-                    arbol.rotateLeft(n10);
-                    System.out.println("Después de rotateLeft(10):"); arbol.imprimirArbol();
-                    break;
-                case 3:
-                    // Demo fija: rotación derecha sólo en demo (no se permite sobre lista ingresada)
-                    System.out.println("Demo rotateRight: insertamos 10,5,15,3 y rotamos derecha en 10");
-                    arbol = new ArbolRN<>();
-                    arbol.insertBST(10, "A");
-                    arbol.insertBST(5, "B");
-                    arbol.insertBST(15, "C");
-                    arbol.insertBST(3, "D");
-                    System.out.println("Antes:"); arbol.imprimirArbol();
-                    ArbolRN<Integer,String>.RBNode n10r = arbol.buscarNodo(10);
-                    arbol.rotateRight(n10r);
-                    System.out.println("Después de rotateRight(10):"); arbol.imprimirArbol();
-                    break;
-                case 4:
-                    System.out.print("Clave entera a insertar (BST sin balance): ");
-                    int k = Integer.parseInt(sc.nextLine().trim());
-                    arbol.insertBST(k, "v"+k);
-                    System.out.println("Insertado como BST (sin fix). Árbol resultante:");
-                    arbol.imprimirArbol();
-                    break;
-                case 5:
-                    System.out.print("Clave existente para clasificar su caso (p/ej 10): ");
-                    int kc = Integer.parseInt(sc.nextLine().trim());
-                    ArbolRN<Integer,String>.RBNode nodoC = arbol.buscarNodo(kc);
-                    if (nodoC == null) { System.out.println("Nodo no encontrado."); break; }
-                    try {
-                        System.out.println("Caso: " + arbol.clasificar(nodoC));
-                    } catch (Exception e) { System.out.println("No se pudo clasificar (posible nodo sin abuelo)." ); }
-                    break;
-                case 6:
-                    System.out.println("Demo insertarYArreglar: insertamos 10,5,15,1,6 y arreglamos cada inserción");
-                    arbol = new ArbolRN<>();
-                    int[] demo = {10,5,15,1,6};
-                    for (int v: demo) {
-                        arbol.insertarYArreglar(v, "v"+v);
-                    }
-                    arbol.imprimirArbol();
-                    break;
-                case 7:
-                    System.out.println("Rotación simple vs doble: insertamos 30,20,10 (cadena LL) y arreglamos");
-                    arbol = new ArbolRN<>();
-                    arbol.insertarYArreglar(30, "v30");
-                    arbol.insertarYArreglar(20, "v20");
-                    arbol.insertarYArreglar(10, "v10");
-                    arbol.imprimirArbol();
-                    System.out.println("Ahora insertamos 25 para forzar LR en otra rama:");
-                    arbol.insertarYArreglar(25, "v25");
-                    arbol.imprimirArbol();
-                    break;
-                case 8:
-                    // Successor / Predecessor — preferir árbol persistente o lista ingresada
-                    if (modoManualPersistente && arbolPersistente != null) {
-                        arbol = arbolPersistente;
-                        System.out.println("Usando árbol persistente. Árbol actual:"); arbol.imprimirArbol();
-                        System.out.print("Ingrese la clave para calcular successor/predecessor: ");
-                        try {
-                            int clave = Integer.parseInt(sc.nextLine().trim());
-                            ArbolRN<Integer,String>.RBNode nodo = arbol.buscarNodo(clave);
-                            if (nodo == null) System.out.println("Nodo no encontrado.");
-                            else {
-                                ArbolRN<Integer,String>.RBNode s = arbol.successor(nodo);
-                                ArbolRN<Integer,String>.RBNode p = arbol.predecessor(nodo);
-                                System.out.println("Successor de " + clave + ": " + (s!=null? s.getKey() : "null"));
-                                System.out.println("Predecessor de " + clave + ": " + (p!=null? p.getKey() : "null"));
-                            }
-                        } catch (Exception e) { System.out.println("Entrada inválida."); }
-                    } else if (askDemoOrManual(sc)) {
-                        System.out.println("Demo Successor/Predecessor con claves 5,10,15");
-                        arbol = new ArbolRN<>(); arbol.insertarYArreglar(10,"v10"); arbol.insertarYArreglar(5,"v5"); arbol.insertarYArreglar(15,"v15");
-                        ArbolRN<Integer,String>.RBNode n5 = arbol.buscarNodo(5);
-                        ArbolRN<Integer,String>.RBNode n10s = arbol.successor(n5);
-                        System.out.println("Successor de 5: " + (n10s!=null? n10s.getKey() : "null"));
-                        ArbolRN<Integer,String>.RBNode n15 = arbol.buscarNodo(15);
-                        ArbolRN<Integer,String>.RBNode p15 = arbol.predecessor(n15);
-                        System.out.println("Predecessor de 15: " + (p15!=null? p15.getKey() : "null"));
-                    } else {
-                        System.out.println("Inserte una lista de enteros separados por comas para construir el árbol:");
-                        arbol = buildTreeFromList(sc, true); // por defecto usar fix al construir lista manual para operaciones
-                        modoManualPersistente = true; arbolPersistente = arbol;
-                        System.out.println("Árbol construido:"); arbol.imprimirArbol();
-                        System.out.print("Ingrese la clave para calcular successor/predecessor: ");
-                        try {
-                            int clave = Integer.parseInt(sc.nextLine().trim());
-                            ArbolRN<Integer,String>.RBNode nodo = arbol.buscarNodo(clave);
-                            if (nodo == null) System.out.println("Nodo no encontrado.");
-                            else {
-                                ArbolRN<Integer,String>.RBNode s = arbol.successor(nodo);
-                                ArbolRN<Integer,String>.RBNode p = arbol.predecessor(nodo);
-                                System.out.println("Successor de " + clave + ": " + (s!=null? s.getKey() : "null"));
-                                System.out.println("Predecessor de " + clave + ": " + (p!=null? p.getKey() : "null"));
-                            }
-                        } catch (Exception e) { System.out.println("Entrada inválida."); }
-                    }
-                    break;
-                case 9:
-                    // Consulta por rango — permitir usar árbol persistente o construir uno manual
-                    if (modoManualPersistente && arbolPersistente != null) {
-                        arbol = arbolPersistente;
-                        System.out.println("Usando árbol persistente. Árbol actual:"); arbol.imprimirArbol();
-                        try {
-                            System.out.print("Ingrese a (límite inferior): "); int a = Integer.parseInt(sc.nextLine().trim());
-                            System.out.print("Ingrese b (límite superior): "); int b = Integer.parseInt(sc.nextLine().trim());
-                            List<Integer> rlist = arbol.rango(a,b);
-                            System.out.println("Claves en ["+a+","+b+"]: " + rlist);
-                        } catch (Exception e) { System.out.println("Entrada inválida."); }
-                    } else if (askDemoOrManual(sc)) {
-                        System.out.println("Demo rango: insertamos 1..10 y consultamos rango [3,7]");
-                        arbol = new ArbolRN<>();
-                        for (int i=1;i<=10;i++) arbol.insertarYArreglar(i, "v"+i);
-                        List<Integer> r = arbol.rango(3,7);
-                        System.out.println("Claves en [3,7]: " + r);
-                    } else {
-                        System.out.println("Inserte una lista de enteros separados por comas para construir el árbol (usar fix? s/n):");
-                        System.out.print("Usar fixInsert al insertar? (s/n): ");
-                        boolean usarFix = sc.nextLine().trim().toLowerCase().startsWith("s");
-                        arbol = buildTreeFromList(sc, usarFix);
-                        modoManualPersistente = true; arbolPersistente = arbol;
-                        arbol.imprimirArbol();
-                        try {
-                            System.out.print("Ingrese a (límite inferior): "); int a = Integer.parseInt(sc.nextLine().trim());
-                            System.out.print("Ingrese b (límite superior): "); int b = Integer.parseInt(sc.nextLine().trim());
-                            List<Integer> rlist = arbol.rango(a,b);
-                            System.out.println("Claves en ["+a+","+b+"]: " + rlist);
-                        } catch (Exception e) { System.out.println("Entrada inválida."); }
-                    }
-                    break;
-                case 10:
-                    // Verificadores de invariantes: preferir árbol persistente o lista ingresada
-                    if (modoManualPersistente && arbolPersistente != null) {
-                        arbol = arbolPersistente;
-                        System.out.println("Usando árbol persistente. Árbol actual:"); arbol.imprimirArbol();
-                        System.out.println("raizNegra: " + arbol.raizNegra());
-                        System.out.println("sinRojoRojo: " + arbol.sinRojoRojo());
-                        System.out.println("alturaNegra (o -1 si falla): " + arbol.alturaNegra());
-                    } else if (askDemoOrManual(sc)) {
-                        System.out.println("Demo invariantes: insertamos 10,5,15,1,6,12,17 y comprobamos invariantes");
-                        arbol = new ArbolRN<>(); int[] ins = {10,5,15,1,6,12,17};
-                        for (int v: ins) arbol.insertarYArreglar(v, "v"+v);
-                        arbol.imprimirArbol();
-                        System.out.println("raizNegra: " + arbol.raizNegra());
-                        System.out.println("sinRojoRojo: " + arbol.sinRojoRojo());
-                        System.out.println("alturaNegra (o -1 si falla): " + arbol.alturaNegra());
-                    } else {
-                        System.out.println("Inserte una lista de enteros separados por comas para construir el árbol (usar fix? s/n):");
-                        System.out.print("Usar fixInsert al insertar? (s/n): ");
-                        boolean usarFix = sc.nextLine().trim().toLowerCase().startsWith("s");
-                        arbol = buildTreeFromList(sc, usarFix);
-                        modoManualPersistente = true; arbolPersistente = arbol;
-                        arbol.imprimirArbol();
-                        System.out.println("raizNegra: " + arbol.raizNegra());
-                        System.out.println("sinRojoRojo: " + arbol.sinRojoRojo());
-                        System.out.println("alturaNegra (o -1 si falla): " + arbol.alturaNegra());
-                    }
-                    break;
-                case 11:
-                    System.out.println("Árbol actual:"); arbol.imprimirArbol();
-                    break;
-                case 12:
-                    modoManualPersistente = false;
-                    arbolPersistente = null;
-                    System.out.println("Modo manual persistente desactivado.");
-                    break;
-                default:
-                    System.out.println("Opción inválida");
-            }
-        }
-        sc.close();
-    }
+    // 1) Crear NIL/root y mostrar estado
+    System.out.println("Demo a usar: (10,5,15,12)");
+    System.out.println("1) Crear arbol:");
+    ArbolRN<Integer,String> arbol1 = new ArbolRN<>();
+    System.out.println("Raíz presente? " + (arbol1.getRoot() != null));
+    ArbolRN<Integer,String> demoTreeFor2 = new ArbolRN<>();
+    demoTreeFor2.insertBST(10, "A");
+    demoTreeFor2.insertBST(5, "B");
+    demoTreeFor2.insertBST(15, "C");
+    demoTreeFor2.insertBST(12, "D");
+    demoTreeFor2.imprimirArbol();
+    System.out.println();
 
-    private static boolean askDemoOrManual(Scanner sc) {
-        System.out.print("Usar demo preset? (s/n): ");
-        String r = sc.nextLine().trim().toLowerCase();
-        return r.startsWith("s");
-    }
+    // 2) Rotación izquierda (demo)
+    System.out.println("Demo a usar: (10,5,15,12)");
+    System.out.println("2) Demo rotateLeft:");
+        ArbolRN<Integer,String> arbol2 = new ArbolRN<>();
+        arbol2.insertBST(10, "A");
+        arbol2.insertBST(5, "B");
+        arbol2.insertBST(15, "C");
+        arbol2.insertBST(12, "D");
+        System.out.println("Antes:"); arbol2.imprimirArbol();
+        ArbolRN<Integer,String>.RBNode n10 = arbol2.buscarNodo(10);
+        arbol2.rotateLeft(n10);
+        System.out.println("Después de rotateLeft(10):"); arbol2.imprimirArbol();
+        System.out.println();
 
-    private static ArbolRN<Integer,String> buildTreeFromList(Scanner sc, boolean usarFix) {
-        ArbolRN<Integer,String> arbol = new ArbolRN<>();
-        String line = sc.nextLine().trim();
-        if (line.isEmpty()) return arbol;
-        String[] parts = line.split(",");
-        for (String p: parts) {
-            try {
-                int v = Integer.parseInt(p.trim());
-                if (usarFix) arbol.insertarYArreglar(v, "v"+v);
-                else arbol.insertBST(v, "v"+v);
-            } catch (NumberFormatException e) {
-                // saltar tokens inválidos
-            }
-        }
-        return arbol;
+    // 3) Rotación derecha (demo)
+    System.out.println("Demo a usar: (10,5,15,3)");
+    System.out.println("3) Demo rotateRight:");
+        ArbolRN<Integer,String> arbol3 = new ArbolRN<>();
+        arbol3.insertBST(10, "A");
+        arbol3.insertBST(5, "B");
+        arbol3.insertBST(15, "C");
+        arbol3.insertBST(3, "D");
+        System.out.println("Antes:"); arbol3.imprimirArbol();
+        ArbolRN<Integer,String>.RBNode n10r = arbol3.buscarNodo(10);
+        arbol3.rotateRight(n10r);
+        System.out.println("Después de rotateRight(10):"); arbol3.imprimirArbol();
+        System.out.println();
+
+    // 4) Insertar como BST (sin balance)
+    System.out.println("Demo a usar: (42,21,84)");
+    System.out.println("4) Insertar como BST (sin fix):");
+        ArbolRN<Integer,String> arbol4 = new ArbolRN<>();
+        arbol4.insertBST(42, "v42");
+        arbol4.insertBST(21, "v21");
+        arbol4.insertBST(84, "v84");
+        arbol4.imprimirArbol();
+        System.out.println();
+
+    // 5) Clasificar caso de un nodo (dos ejemplos)
+    System.out.println("Demo a usar:  (10,20,30 -> RR) y (30,20,10 -> LL)");
+    System.out.println("5) Clasificar caso:");
+
+    // Ejemplo A: 10,20,30 (debería clasificarse como RR)
+    System.out.println("Ejemplo A: insertar 10,20,30 (esperado: RR)");
+    ArbolRN<Integer,String> arbol5a = new ArbolRN<>();
+    arbol5a.insertBST(10, "v10");
+    arbol5a.insertBST(20, "v20");
+    ArbolRN<Integer,String>.RBNode zA = arbol5a.insertBST(30, "v30");
+    System.out.println("Antes del balanceo (insertBST):");
+    arbol5a.imprimirArbol();
+    arbol5a.fixInsert(zA);// aplicar el algoritmo de fix para mostrar el después
+    System.out.println("Después del balanceo (fixInsert):");
+    arbol5a.imprimirArbol();
+    System.out.println();
+
+    // Ejemplo B: 30,20,10 (debería clasificarse como LL)
+    System.out.println("Ejemplo B: insertar 30,20,10 (esperado: LL)");
+    ArbolRN<Integer,String> arbol5b = new ArbolRN<>();
+    arbol5b.insertBST(30, "v30");
+    arbol5b.insertBST(20, "v20");
+    ArbolRN<Integer,String>.RBNode zB = arbol5b.insertBST(10, "v10");
+    System.out.println("Antes del balanceo (insertBST):");
+    arbol5b.imprimirArbol();
+    arbol5b.fixInsert(zB);// aplicar el algoritmo de fix para mostrar el después    // aplicar el algoritmo de fix para mostrar el después
+    System.out.println("Después del balanceo (fixInsert):");
+    arbol5b.imprimirArbol();
+    System.out.println();
+
+    // 6) Recolorear por tío rojo (mostrar antes y después)
+    System.out.println("Demo a usar: (10,5,15,1,6)");
+    System.out.println("6) Demo insertarYArreglar (recoloreos)");
+        ArbolRN<Integer,String> arbol6 = new ArbolRN<>();
+        // insertamos todos excepto el último con insertBST para ver el estado "antes"
+        arbol6.insertBST(10, "v10");
+        arbol6.insertBST(5, "v5");
+        arbol6.insertBST(15, "v15");
+        arbol6.insertBST(1, "v1");
+        // insertar el último y capturarlo
+        ArbolRN<Integer,String>.RBNode z6 = arbol6.insertBST(6, "v6");
+        System.out.println("Antes del balanceo (insertBST, sin fix):");
+        arbol6.imprimirArbol();
+        // aplicar fixInsert para mostrar el después
+        arbol6.fixInsert(z6);
+        System.out.println("Después del balanceo (fixInsert):");
+        arbol6.imprimirArbol();
+        System.out.println();
+
+    // 7) Rotación simple/doble (mostrar antes y después: LL -> luego LR)
+    System.out.println("Demo a usar: (30,20,10,25)");
+    System.out.println("7) Rotación simple/doble (LL -> luego LR) :");
+        ArbolRN<Integer,String> arbol7 = new ArbolRN<>();
+        // forzar la inserción que provoca LL: insertar 30 y 20 primero
+        arbol7.insertBST(30, "v30");
+        arbol7.insertBST(20, "v20");
+        // insertar 10 y capturar para mostrar before/after
+        ArbolRN<Integer,String>.RBNode z7a = arbol7.insertBST(10, "v10");
+        System.out.println("Antes del balanceo (insertBST 30,20,10):");
+        arbol7.imprimirArbol();
+        arbol7.fixInsert(z7a);
+        System.out.println("Después del balanceo (fixInsert - debería ser LL):");
+        arbol7.imprimirArbol();
+        System.out.println();
+        // ahora insertar 25 para forzar un caso LR en otra rama y mostrar before/after
+        System.out.println("Insertar 25 para forzar LR en otra rama:");
+        ArbolRN<Integer,String>.RBNode z7b = arbol7.insertBST(25, "v25");
+        System.out.println("Antes del balanceo (insertBST 25):");
+        arbol7.imprimirArbol();
+        arbol7.fixInsert(z7b);
+        System.out.println("Después del balanceo (fixInsert)");
+        arbol7.imprimirArbol();
+        System.out.println();
+
+    // 8) Successor / Predecessor
+    System.out.println("Demo a usar: (5,10,15)");
+    System.out.println("8) Successor / Predecessor (ejemplo con 5,10,15):");
+        ArbolRN<Integer,String> arbol8 = new ArbolRN<>();
+        arbol8.insertarYArreglar(10, "v10"); arbol8.insertarYArreglar(5, "v5"); arbol8.insertarYArreglar(15, "v15");
+        ArbolRN<Integer,String>.RBNode n5 = arbol8.buscarNodo(5);
+        ArbolRN<Integer,String>.RBNode s = arbol8.successor(n5);
+        System.out.println("Successor de 5: " + (s!=null? s.getKey() : "null"));
+        ArbolRN<Integer,String>.RBNode n15 = arbol8.buscarNodo(15);
+        ArbolRN<Integer,String>.RBNode p = arbol8.predecessor(n15);
+        System.out.println("Predecessor de 15: " + (p!=null? p.getKey() : "null"));
+        System.out.println();
+
+    // 9) Consulta por rango [a,b]
+    System.out.println("Demo a usar: árbol 1..10 ");
+    System.out.println("9) Consulta por rango [3,7]");
+        ArbolRN<Integer,String> arbol9 = new ArbolRN<>();
+        for (int i=1;i<=10;i++) arbol9.insertarYArreglar(i, "v"+i);
+        List<Integer> r = arbol9.rango(3,7);
+        System.out.println("Claves en [3,7]: " + r);
+        System.out.println();
+
+    // 10) Verificadores de invariantes
+    System.out.println("Demo a usar: (10,5,15,1,6,12,17)");
+    System.out.println("10) Verificadores de invariantes en árbol de ejemplo:");
+        ArbolRN<Integer,String> arbol10 = new ArbolRN<>();
+        int[] ins = {10,5,15,1,6,12,17};
+        for (int v: ins) arbol10.insertarYArreglar(v, "v"+v);
+        arbol10.imprimirArbol();
+        System.out.println("raizNegra: " + arbol10.raizNegra());
+        System.out.println("sinRojoRojo: " + arbol10.sinRojoRojo());
+        System.out.println("alturaNegra (o -1 si falla): " + arbol10.alturaNegra());
+        System.out.println();
+
+    // 11) Mostrar árbol (ya mostrado en varios pasos), repetir final
+    System.out.println("Demo a usar: repetir la impresión del árbol de verificadores");
+    System.out.println("11) Mostrar árbol final de ejemplo:");
+        arbol10.imprimirArbol();
+        System.out.println();
+
+        System.out.println("\n=== FIN DEMO Tp6 ===");
     }
 }
