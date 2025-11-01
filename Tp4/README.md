@@ -1,4 +1,3 @@
-
 # Guía TP4 — Lista Enlazada (LinkedList)
 
 Esta carpeta contiene una implementación didáctica de una lista enlazada simple (no concurrente) usada en el práctico 4.
@@ -50,4 +49,3 @@ Notas y recomendaciones
 Contacto
 
 Si querés que ejecute los demos y pegue la salida aquí (para verificar comportamiento), indicamelo y lo hago.
-
