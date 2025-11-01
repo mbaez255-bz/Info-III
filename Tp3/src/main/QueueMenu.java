@@ -44,7 +44,7 @@ public class QueueMenu {
                     if (front != null) {
                         System.out.println("Elemento al frente: " + front);
                     } else {
-                        System.out.println("La cola esta vacia.");
+                        System.out.println("La cola esta vacia");
                     }
                     break;
                 case 4: // Buscar
