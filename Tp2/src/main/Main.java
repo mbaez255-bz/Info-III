@@ -1,7 +1,15 @@
 package main;
 
-import utils.*;
 import java.util.Scanner;
+
+import utils.BusquedaArreglo;
+import utils.CadenaCapicua;
+import utils.ConteoDigitos;
+import utils.ConversionBinaria;
+import utils.InvertirCadena;
+import utils.MCD;
+import utils.NumerosFibonacci;
+import utils.SumaElementos;
 
 /**
  * Clase principal del proyecto. Muestra un menú interactivo para ejecutar distintos ejercicios.
