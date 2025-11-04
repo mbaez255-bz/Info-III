@@ -7,10 +7,10 @@ public class AVLTree<T extends Comparable<T>> {
     // Raíz del árbol
     private Node<T> root;
 
-    @SuppressWarnings("unchecked")
+    // --- MÉTODOS PÚBLICOS ---
     // 1) Construcción / preparación del árbol de demo
     public void createDemoTree() {
-        // Manual construction for demo:
+    // Construcción manual para el demo:
         //        30
         //       /  \
         //     10    40
@@ -26,11 +26,13 @@ public class AVLTree<T extends Comparable<T>> {
         root.left.right.right = new Node<>((T) (Integer) 25);
         root.right.right = new Node<>((T) (Integer) 50);
 
-        // update heights from bottom
+    
+        // Actualizar alturas desde abajo (desde las hojas hacia la raíz)
         updateHeight(root.left.left);
         updateHeight(root.left.right.right);
         updateHeight(root.left.right);
         updateHeight(root.left);
+
         updateHeight(root.right.right);
         updateHeight(root.right);
         updateHeight(root);
@@ -70,6 +72,13 @@ public class AVLTree<T extends Comparable<T>> {
             if (root == null) System.out.println("(vacío)"); else printTree();
             return true;
         }
+        /*Resumen general
+        public boolean remove(T value) es el método que el usuario llama. En tu código hace:
+        Rechaza eliminar la raíz explícitamente (si el valor a eliminar es exactamente root.value imprime un mensaje y devuelve false).
+        Calcula before = inOrderTraversal() (lista de valores antes).
+        Llama root = removeRec(root, value) para intentar borrar en el árbol (re-asigna root porque la raíz del árbol puede cambiar).
+        Calcula after = inOrderTraversal() y compara before.equals(after) para decidir si se eliminó algo (devuelve false si no cambió).
+        Si se eliminó, imprime el árbol resultante y retorna true. */
     }
 
     /** Pruebas mínimas para isAVL() */
@@ -84,13 +93,13 @@ public class AVLTree<T extends Comparable<T>> {
         System.out.println("--- Fin ---\n");
     }
 
-    /** 6) Returns the tree height. */
+    /** 6) Devuelve la altura del árbol. */
     public int getHeight() { return nodeHeight(root); }
 
 
     // --- MÉTODOS PRIVADOS ---
 
-    // Búsqueda recursiva
+    // Búsqueda recursiva(paso 3)
     private Node<T> searchRec(Node<T> node, T value) {
         if (node == null) return null;
         int cmp = value.compareTo(node.value);
@@ -127,7 +136,7 @@ public class AVLTree<T extends Comparable<T>> {
         int balLeft = getBalance(node.left);
         int balRight = getBalance(node.right);
 
-        // Detect case and apply rotation
+    // Detecta el caso y aplica la rotación
         if (balance < -1 && balRight <= 0) {
             // Caso RR -> rotación izquierda
             System.out.println("Rebalanceo: Rotación izquierda (RR) en nodo " + node.value);
@@ -154,7 +163,7 @@ public class AVLTree<T extends Comparable<T>> {
         return node;
     }
 
-    // Rotate left: returns new root of subtree
+    // Rotación izquierda: devuelve la nueva raíz del subárbol
     private Node<T> rotateLeft(Node<T> y) {
         Node<T> x = y.right;
         Node<T> tempLeft = x.left;
@@ -165,7 +174,7 @@ public class AVLTree<T extends Comparable<T>> {
         return x;
     }
 
-    // Rotate right: returns new root of subtree
+    // Rotación derecha: devuelve la nueva raíz del subárbol
     private Node<T> rotateRight(Node<T> y) {
         Node<T> x = y.left;
         Node<T> tempRight = x.right;
@@ -176,20 +185,21 @@ public class AVLTree<T extends Comparable<T>> {
         return x;
     }
 
-    // Recursive removal
+    // Eliminación recursiva
     private Node<T> removeRec(Node<T> node, T value) {
         if (node == null) return null;
+        //busca el nodo a borrar
         int cmp = value.compareTo(node.value);
-        if (cmp < 0) node.left = removeRec(node.left, value);
-        else if (cmp > 0) node.right = removeRec(node.right, value);
+        if (cmp < 0) node.left = removeRec(node.left, value);//se vuelve a buscar por izq
+        else if (cmp > 0) node.right = removeRec(node.right, value);//se vuelve a buscar por dcha
         else {
-            // Node found
-            if (node.left == null || node.right == null) {
+            // Nodo encontrado
+                if (node.left == null || node.right == null) {
                 Node<T> temp = (node.left != null) ? node.left : node.right;
-                if (temp == null) return null; // no children
-                else node = temp; // one child
+                if (temp == null) return null; // ambos hijos eran null, se borra el nodo
+                    else node = temp; // un hijo lo pas a a temp y se borra el nodo
             } else {
-                // two children: find inorder successor
+                // dos hijos: buscar sucesor in-order, lo copia y borra el sucesor
                 Node<T> successor = minValueNode(node.right);
                 node.value = successor.value;
                 node.right = removeRec(node.right, successor.value);
@@ -197,26 +207,29 @@ public class AVLTree<T extends Comparable<T>> {
         }
         updateHeight(node);
         return rebalance(node);
+        /*Propósito: borra value del subárbol con raíz node y devuelve la nueva raíz
+        del subárbol (puede ser null si queda vacío). */
     }
 
-    // Returns node with minimum value in subtree
+    // Devuelve el nodo con el valor mínimo en el subárbol
     private Node<T> minValueNode(Node<T> node) {
         Node<T> current = node;
         while (current.left != null) current = current.left;
         return current;
     }
 
-    // Recursive printing with prefixes to represent hierarchy
+    // Impresión recursiva con prefijos para representar la jerarquía
     private void printTreeRec(Node<T> node, String prefix, boolean isTail) {
         if (node != null) {
             System.out.println(prefix + (isTail ? "└── " : "├── ") + node.value + " (bf=" + getBalance(node) + ")");
             printTreeRec(node.left, prefix + (isTail ? "    " : "│   "), false);
             printTreeRec(node.right, prefix + (isTail ? "    " : "│   "), true);
         }
+        //Es decir: concatena el prefix(""), después └──  si isTail==true o ├──  si no, luego el valor del nodo y entre paréntesis el factor de balance (bf).
     }
 
-    // Internal node class
-    private static class Node<T> {
+        // Clase interna para nodos del árbol
+        private static class Node<T> {
         T value;
         Node<T> left, right;
         int height;
@@ -224,7 +237,7 @@ public class AVLTree<T extends Comparable<T>> {
         Node(T value) { this.value = value; this.height = 1; }
     }
 
-    // Recursive method that returns whether subtree is AVL and its height
+    // Método recursivo que devuelve si el subárbol es AVL y su altura
     private Result isAVLRec(Node<T> node, T min, T max) {
         if (node == null) return new Result(true, 0);
 
@@ -232,6 +245,7 @@ public class AVLTree<T extends Comparable<T>> {
         if ((min != null && node.value.compareTo(min) <= 0) ||
             (max != null && node.value.compareTo(max) >= 0)) {
             return new Result(false, 0);
+            //Si el valor actual no está estrictamente entre (min, max) → falla la propiedad BST → devolvemos isAVL=false.
         }
 
         // check children
@@ -244,9 +258,11 @@ public class AVLTree<T extends Comparable<T>> {
         int height = 1 + Math.max(leftRes.height, rightRes.height);
 
         return new Result(balanced, height);
+        //Nodo 5: left/right nulos → leftRes=(true,0), rightRes=(true,0) → balanced true, height = 1.
+        //Nodo 10: left 5 (1), right 20 (2) → height = 3, balanced true.
     }
 
-    // Helper result class
+    // Clase auxiliar Resultado
     private static class Result {
         boolean isAVL;
         int height;
