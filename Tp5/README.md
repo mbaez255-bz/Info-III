@@ -207,3 +207,27 @@ Operación demo: remover 25
 - Si se detecta LR o LL, se aplicará la rotación correspondiente en `rebalance` y se actualizarán alturas localmente. Después de eso la raíz puede o no cambiar si la rotación ocurre en un nodo alto.
 - El `printTree` y `inOrderTraversal` muestran el resultado.
 
+
+## cuando borro 50
+Actualización de alturas / bf hacia arriba
+
+40 ahora tiene bf = 0 (hoja).
+
+En 30: altura subárbol izquierdo = 3 (por 10), altura subárbol derecho = 1 (por 40) →
+bf(30) = 3 - 1 = 2 → desbalanceado (|bf| > 1).
+
+3) ¿Qué tipo de desbalance es? (LR, LL, RL, RR)
+
+Nodo desbalanceado: 30 con bf = +2 → caso Left (subárbol izquierdo más alto).
+
+Miramos 10 (hijo izquierdo de 30): bf(10) = -1 (su hijo derecho es más alto).
+
+bf(30)=+2 y bf(10)=-1 → caso Left-Right (LR).
+
+4) Rotaciones necesarias (LR)
+
+Para LR se hacen dos rotaciones:
+
+Rotación izquierda sobre 10 (su hijo derecho 20 sube).
+
+Rotación derecha sobre 30.
