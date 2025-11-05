@@ -6,14 +6,6 @@ El código está pensado para ser usado con demos reproducibles: `Guias/Tp6/main
 runner no interactivo que ejecuta, en secuencia, ejemplos hardcodeados que muestran las operaciones
 clave del práctico y —cuando aplica— el estado "antes" y "después" del balanceo.
 
-Cambios relevantes respecto a la versión interactiva original:
-- `Main` dejó de ser interactivo; ahora corre una secuencia de demos (pasos 1..11) y el paso 12 fue eliminado.
-- En el paso 1 `Main` crea un árbol de ejemplo que se reutiliza en la opción 2 (evita duplicar inserciones).
-- El paso 5 ahora incluye dos ejemplos (10,20,30 y 30,20,10) y muestra el estado antes y después de aplicar
-  `fixInsert` al nodo insertado.
-- Los pasos 6 y 7 muestran también el árbol antes y después de aplicar el balanceo (se usa `insertBST` + `fixInsert`)
-  para que se aprecie la transformación.
-- Se eliminó el getter `getVal()` del `RBNode` porque no era utilizado por los demos.
 
 Los archivos principales están en:
 
