@@ -114,9 +114,9 @@ public class AgendaMedico {
                 System.out.println((i + 1) + ". " + turnos.get(i));
             }
             
-            System.out.println("\nSiguiente disponible ≥ " + 
+            System.out.println("\nSiguiente disponible -> " + 
                              LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm")) + 
-                             " hs → ");
+                             " hs -> ");
             
             Turno siguiente = siguienteDisponible(matriculaMedico, LocalDateTime.now());
             if (siguiente != null) {
