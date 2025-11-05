@@ -9,6 +9,7 @@ public class AVLTree<T extends Comparable<T>> {
 
     // --- MÉTODOS PÚBLICOS ---
     // 1) Construcción / preparación del árbol de demo
+    @SuppressWarnings("unchecked")
     public void createDemoTree() {
     // Construcción manual para el demo:
         //        30
