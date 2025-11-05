@@ -31,7 +31,6 @@ public class MinHeapGeneric<T> {
         size++;
     }
 
-    @SuppressWarnings("unchecked")
     /**
      * Sube el elemento en índice i mientras sea menor que su padre según cmp.
      */
@@ -48,7 +47,6 @@ public class MinHeapGeneric<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     /**
      * Extrae y devuelve el elemento mínimo (según cmp), o null si está vacío.
      * Complejidad: O(log n).
@@ -62,7 +60,6 @@ public class MinHeapGeneric<T> {
         return res;
     }
 
-    @SuppressWarnings("unchecked")
     /**
      * Baja el elemento en índice i intercambiándolo con el hijo de menor orden
      * según cmp hasta restaurar la propiedad de heap.

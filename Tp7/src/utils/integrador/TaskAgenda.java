@@ -13,7 +13,7 @@ public class TaskAgenda {
      * Crea la agenda con un Comparator que considera menor valor como más urgente.
      */
     public TaskAgenda() {
-        // Comparator: lower priority number == higher urgency
+        // Comparador: la menor prioridad numérica == mayor urgencia
         heap = new MinHeapGeneric<>(Comparator.comparingInt(task -> task.priority));
     }
 
@@ -37,7 +37,7 @@ public class TaskAgenda {
      * Nota: hace O(n log n) porque poll/reinsert utilizan log n cada una.
      */
     public void showAll() {
-        // Temporarily consume and re-insert so tasks are not lost
+        // temporalmente consumir y reinsertar para que no se pierdan las tareas
         java.util.List<Task> tmp = new java.util.ArrayList<>();
         while (!heap.isEmpty()) {
             Task t = heap.poll();

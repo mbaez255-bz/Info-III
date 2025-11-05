@@ -11,6 +11,7 @@ public class MinHeap {
 
     public MinHeap() {
         heap = new int[10];
+        //heap es un arreglo dinámico que almacena los elementos del montículo
         size = 0;
     }
     //constructor monticulo binario a partir de un arreglo
@@ -22,7 +23,7 @@ public class MinHeap {
      * @param data arreglo de entrada
      */
     public MinHeap(int[] data) {
-        heap = Arrays.copyOf(data, Math.max(data.length, 10));
+        heap = Arrays.copyOf(data, Math.max(data.length, 10));//10 elementos mínimo
         size = data.length;
     System.out.println("Construcción heapify desde: " + Arrays.toString(Arrays.copyOf(data, size)));
         for (int i = parent(size - 1); i >= 0; i--) {
@@ -30,7 +31,7 @@ public class MinHeap {
             System.out.println("Paso heapify (i=" + i + "): " + Arrays.toString(Arrays.copyOf(heap, size)));
         }
     }
-
+    //asegura capacidad del arreglo (si el tamaño actual es igual o mayor que la longitud del arreglo, se duplica la capacidad del arreglo)
     private void ensureCapacity() {
         if (size >= heap.length) {
             heap = Arrays.copyOf(heap, heap.length * 2);
@@ -46,13 +47,13 @@ public class MinHeap {
         ensureCapacity();
         heap[size] = value;
     System.out.println("Insertando " + value + " en índice " + size);
-        percolateUp(size);
+        percolateUp(size);//para subir el valor si es más pequeño que sus padres.
         size++;
         printArray();
         printTree();
     }
 
-    private void percolateUp(int idx) {
+    private void percolateUp(int idx) {//Complejidad: O(log n).
         int i = idx;
         while (i > 0) {
             int p = parent(i);
@@ -61,6 +62,7 @@ public class MinHeap {
                 int tmp = heap[i]; heap[i] = heap[p]; heap[p] = tmp;
                 i = p;
             } else break;
+            //si el hijo es menor que el padre, se intercambian y se continúa subiendo
         }
     }
     //extrae el mínimo (raíz) y reorganiza con percolateDown.
@@ -74,10 +76,27 @@ public class MinHeap {
     System.out.println("Después de extraer: " + java.util.Arrays.toString(Arrays.copyOf(heap, size)));
         printTree();
         return res;
+        //el minimo lo encuentra en la raíz (índice 0), se reemplaza con el último elemento y se reduce el tamaño del heap. 
+        //Luego se llama a percolateDown para restaurar la propiedad del heap.
+    }
+
+    /**
+     * Variante silenciosa de poll(): extrae y devuelve el mínimo sin imprimir
+     * información de depuración. Útil para demos que sólo quieren el valor.
+     */
+    public int pollSilent() {
+        if (isEmpty()) throw new RuntimeException("Heap vacío");
+        int res = heap[0];
+        heap[0] = heap[size-1];
+        size--;
+        percolateDown(0, true); // silent = true -> no prints
+        return res;
     }
 
     private void percolateDown(int idx, boolean silent) {
         int i = idx;
+        //compara el nodo i con sus hijos y elige smallest entre i, left y right. 
+        //Si smallest no es i, intercambia y continúa.
         while (true) {
             int l = left(i), r = right(i);
             int smallest = i;
@@ -116,6 +135,7 @@ public class MinHeap {
     }
 
     public static void heapsort(int[] arr) {
+        //Resultado: el arreglo arr queda ordenado de menor a mayor.
         MinHeap h = new MinHeap(arr);
         int n = arr.length;
         for (int i = 0; i < n; i++) {
