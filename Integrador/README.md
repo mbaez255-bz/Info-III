@@ -190,17 +190,3 @@ T-001,32045982,M001,2025-11-22T09:00,30,Control
 T-015,32458910,M001,2025-11-22T09:30,45,ECG
 T-022,31247856,M001,2025-11-22T10:00,30,Consulta general
 ```
-
-## Testing
-- Se incluyen tests para cada ejercicio en el menú
-- Validaciones: fechas pasadas, duplicados, conflictos de horario
-- Casos borde: overflow en cola, rehash en hash, rotaciones AVL
-
-## Criterios de Corrección Cumplidos
-✅ Complejidades objetivo alcanzadas  
-✅ Correctitud funcional (sin solapamientos, merges correctos, estabilidad)  
-✅ Diseño de estructuras (nombres claros, invariantes documentados)  
-✅ README con decisiones técnicas (hash, balanceo, horarios laborales)
-
-## Autor
-Desarrollo para Informática III - 2025
