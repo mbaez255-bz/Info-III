@@ -78,6 +78,7 @@ public class MinHeapGeneric<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     /**
      * Devuelve el mínimo sin extraerlo o null si está vacío.
      */
