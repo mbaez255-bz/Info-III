@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArbolRN<K extends Comparable<K>, V> {
-
     /**
      * Nodo interno del RBT.
      * Contiene key/val, punteros left/right/parent y un booleano 'rojo' que

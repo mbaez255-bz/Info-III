@@ -51,7 +51,7 @@ public class Main {
 			}
 		}
 		sc.close();
-		System.out.println("Bye");
+		System.out.println("Adiós");
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class Main {
 		MinHeap h = new MinHeap();
 		int[] vals = {20,5,15,3,11};
 		for (int v: vals) h.add(v);
-		System.out.println("Extraer en orden:");
+		System.out.println("/nExtraer en orden:");
 		while (!h.isEmpty()) System.out.println(h.poll());
 	}
 
@@ -83,14 +83,14 @@ public class Main {
 	 * extrae elementos sucesivamente mostrando cada extracción.
 	 */
 	static void demoPollShows() {
-		System.out.println("Poll mostrando antes y después:");
 		MinHeap h = new MinHeap();
 		int[] vals = {20,5,15,3,11};
 		for (int v: vals) h.add(v);
-		h.printArray();
-	System.out.println("Extrayendo elementos:");
+		// Mostrar únicamente la secuencia de extracción y los prints internos de poll()
+		System.out.println("Extrayendo elementos:");
 		while (!h.isEmpty()) {
-			System.out.println("Extraído: " + h.poll());
+			int v = h.poll();
+			System.out.println("Extraído: " + v);
 		}
 	}
 
@@ -159,9 +159,9 @@ public class Main {
 	 */
 	static void demoTaskAgenda() {
 		TaskAgenda ag = new TaskAgenda();
-		ag.add(new Task("Pay bills", 2));
-		ag.add(new Task("Submit report", 1));
-		ag.add(new Task("Buy supplies", 3));
+		ag.add(new Task("Pagar facturas", 2));
+		ag.add(new Task("Enviar informe", 1));
+		ag.add(new Task("Comprar insumos", 3));
 	System.out.println("Próxima tarea: " + ag.next());
 	System.out.println("Completar: " + ag.complete());
 	System.out.println("Todas pendientes:"); ag.showAll();
