@@ -101,6 +101,7 @@ public class AVLTree<T extends Comparable<T>> {
     // --- MÉTODOS PRIVADOS ---
 
     // Búsqueda recursiva(paso 3)
+    
     private Node<T> searchRec(Node<T> node, T value) {
         if (node == null) return null;
         int cmp = value.compareTo(node.value);
