@@ -148,15 +148,19 @@ public class HashMapPacientes {
     private void rehash() {
         int nuevaCapacidad = capacidad * 2;
         Nodo[] nuevaTabla = new Nodo[nuevaCapacidad];
+        int capacidadAnterior = this.capacidad;
+
+        // Actualizar capacidad para usar el método hash() con la nueva capacidad
+        this.capacidad = nuevaCapacidad;
 
         // Redistribuir todos los elementos
-        for (int i = 0; i < capacidad; i++) {
+        for (int i = 0; i < capacidadAnterior; i++) {
             Nodo actual = tabla[i];
             while (actual != null) {
                 Nodo siguiente = actual.siguiente;
                 
-                // Recalcular hash con nueva capacidad
-                int nuevoIndice = Math.abs((actual.clave.hashCode() * 31) % nuevaCapacidad);
+                // Recalcular hash con nueva capacidad usando el método hash()
+                int nuevoIndice = hash(actual.clave);
                 
                 // Insertar en nueva tabla
                 actual.siguiente = nuevaTabla[nuevoIndice];
@@ -167,7 +171,7 @@ public class HashMapPacientes {
         }
 
         this.tabla = nuevaTabla;
-        this.capacidad = nuevaCapacidad;
+        // La capacidad ya fue actualizada arriba
     }
 
     /**
